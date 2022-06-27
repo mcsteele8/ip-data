@@ -20,14 +20,14 @@ func TestSpyware_getDomainInfo(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    interface{}
+		want    DomainApiResponse
 		wantErr bool
 	}{
 		{
 			name:   "success_run",
 			fields: fields{httpClient: &mock.ClientMock{Response: &http.Response{StatusCode: http.StatusOK, Body: io.NopCloser(strings.NewReader(domainMockResponse))}}},
 			args:   args{domain: "cyderes.com"},
-			want: &DomainApiResponse{
+			want: DomainApiResponse{
 				Domain:      "cyderes.com",
 				DomainID:    "2177835482_DOMAIN_COM-VRSN",
 				Status:      "clientDeleteProhibited https://icann.org/epp#clientDeleteProhibited",
@@ -42,7 +42,7 @@ func TestSpyware_getDomainInfo(t *testing.T) {
 		{
 			name:    "fail_run",
 			fields:  fields{httpClient: &mock.ClientMock{Response: &http.Response{StatusCode: http.StatusBadRequest, Body: io.NopCloser(strings.NewReader(""))}}},
-			want:    nil,
+			want:    DomainApiResponse{},
 			wantErr: true,
 		},
 	}
@@ -56,7 +56,7 @@ func TestSpyware_getDomainInfo(t *testing.T) {
 				t.Errorf("Spyware.getDomainInfo() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !tt.wantErr && got.(*DomainApiResponse).Domain != tt.want.(*DomainApiResponse).Domain && got.(*DomainApiResponse).DomainID != tt.want.(*DomainApiResponse).DomainID {
+			if !tt.wantErr && got.Domain != tt.want.Domain && got.DomainID != tt.want.DomainID {
 				t.Errorf("Spyware.getDomainInfo() = %v, want %v", got, tt.want)
 			}
 		})

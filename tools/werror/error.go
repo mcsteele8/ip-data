@@ -2,6 +2,7 @@ package werror
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"ip-data/tools/wlog"
 	"net/http"
@@ -24,5 +25,8 @@ func DoHttpError(w http.ResponseWriter, statusCode int, message string) {
 }
 
 func Wrap(err error, errMessage string) error {
-	return fmt.Errorf(errMessage+" | err: %w", err)
+	if err == nil {
+		err = errors.New("(error was nil)")
+	}
+	return fmt.Errorf(errMessage+" | err: %s", err.Error())
 }

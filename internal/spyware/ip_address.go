@@ -63,3 +63,8 @@ type IpApiResponse struct {
 	As          string  `json:"as"`
 	Query       string  `json:"query"`
 }
+
+func (i IpApiResponse) ToString() string {
+	b, _ := json.Marshal(i)
+	return string(b)
+}

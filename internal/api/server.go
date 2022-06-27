@@ -10,6 +10,8 @@ import (
 
 	"net/http"
 
+	"github.com/aws/aws-lambda-go/events"
+
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
 )
@@ -24,7 +26,6 @@ func NewServer() *http.Server {
 	svr := &Server{Spyware: spyware.New(&http.Client{})}
 	svr.registerHandlers(router)
 	handler := cors.Default().Handler(router)
-	//Address port should be in a config
 	newServer := &http.Server{
 		Addr:    config.ServerPort,
 		Handler: handler,
@@ -46,7 +47,8 @@ func (s *Server) dataHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	info, err := s.Spyware.GetSpywareInfo(dataRequest)
+	event := events.APIGatewayProxyRequest{PathParameters: map[string]string{"ip-or-domain": dataRequest}}
+	info, err := s.Spyware.GetSpywareInfo(event)
 	if err != nil {
 		if errors.Is(werror.ErrorBadArgs, err) {
 			werror.DoHttpError(w, http.StatusBadRequest, err.Error())
