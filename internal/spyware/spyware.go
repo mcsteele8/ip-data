@@ -18,10 +18,6 @@ type Spyware struct {
 	httpClient HttpClient
 }
 
-type SpywareParams struct {
-	IpOrDomain string `json:"ip_or_domain"`
-}
-
 func New(httpClient *http.Client) *Spyware {
 	return &Spyware{httpClient: httpClient}
 }
